@@ -2,7 +2,6 @@ resource "aws_db_instance" "rds_instance" {
   identifier = var.db_identifier
 
   engine         = "postgres"
-  engine_version = "14.9"
   instance_class = "db.t3.micro"
 
   allocated_storage = 20
