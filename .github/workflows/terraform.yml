@@ -1,0 +1,85 @@
+name: Terraform CI/CD (Dev + Prod)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: {}
+
+jobs:
+  terraform-dev:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::398265530653:role/github-actions-terraform-role
+          aws-region: us-east-2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.5.0
+
+      - name: Terraform Init (Dev)
+        run: terraform init
+        working-directory: infra/environments/dev
+
+      - name: Terraform Validate (Dev)
+        run: terraform validate
+        working-directory: infra/environments/dev
+
+      - name: Terraform Plan (Dev)
+        run: terraform plan -out=tfplan
+        working-directory: infra/environments/dev
+
+      - name: Terraform Apply (Dev)
+        run: terraform apply -auto-approve tfplan
+        working-directory: infra/environments/dev
+
+  terraform-prod:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    environment: prod
+    needs: terraform-dev
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::398265530653:role/github-actions-terraform-role
+          aws-region: us-east-2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.5.0
+
+      - name: Terraform Init (Prod)
+        run: terraform init
+        working-directory: infra/environments/prod
+
+      - name: Terraform Validate (Prod)
+        run: terraform validate
+        working-directory: infra/environments/prod
+
+      - name: Terraform Plan (Prod)
+        run: terraform plan -out=tfplan
+        working-directory: infra/environments/prod
+
+      - name: Terraform Apply (Prod)
+        run: terraform apply -auto-approve tfplan
+        working-directory: infra/environments/prod

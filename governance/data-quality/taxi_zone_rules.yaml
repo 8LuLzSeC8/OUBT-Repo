@@ -1,0 +1,26 @@
+dataset: taxi_zone_lookup
+
+rules:
+  - name: location_id_not_null
+    column: LocationID
+    rule: not_null
+
+  - name: location_id_unique
+    column: LocationID
+    rule: unique
+
+  - name: borough_not_null
+    column: Borough
+    rule: not_null
+
+  - name: zone_not_null
+    column: Zone
+    rule: not_null
+
+  - name: service_zone_valid_values
+    column: service_zone
+    rule: allowed_values
+    values:
+      - EWR
+      - Boro Zone
+      - Yellow Zone
