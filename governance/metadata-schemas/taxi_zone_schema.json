@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Taxi Zone Lookup Schema",
+  "type": "object",
+  "properties": {
+    "LocationID": {
+      "type": "integer",
+      "description": "Unique identifier for taxi zone"
+    },
+    "Borough": {
+      "type": "string",
+      "description": "NYC borough name"
+    },
+    "Zone": {
+      "type": "string",
+      "description": "Taxi zone name"
+    },
+    "service_zone": {
+      "type": "string",
+      "description": "Service zone classification"
+    },
+
+    "record_source": {
+      "type": "string",
+      "description": "Source system of the record"
+    },
+    "ingestion_timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "LocationID",
+    "Borough",
+    "Zone",
+    "service_zone"
+  ]
+}
